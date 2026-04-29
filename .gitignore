@@ -10,5 +10,5 @@ data/predictions/*.csv
 
 models/*.pkl
 models/*.joblib
-
+airflow_home/
 .DS_Store

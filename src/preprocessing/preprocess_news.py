@@ -1,24 +1,9 @@
+import argparse
 from datetime import datetime
 from pathlib import Path
 import re
 
 import pandas as pd
-
-
-def get_latest_raw_file(raw_dir: str = "data/raw") -> Path:
-    raw_folder = Path(raw_dir)
-    raw_files = list(raw_folder.glob("raw_guardian_news_*.csv"))
-
-    if not raw_files:
-        raise FileNotFoundError("No raw Guardian news files found in data/raw.")
-
-    latest_file = max(raw_files, key=get_file_modified_time)
-
-    return latest_file
-
-
-def get_file_modified_time(file_path: Path) -> float:
-    return file_path.stat().st_mtime
 
 
 def clean_text(text: str | None) -> str:
@@ -32,7 +17,6 @@ def clean_text(text: str | None) -> str:
     text = re.sub(r"\s+", " ", text)
     text = re.sub(r"[^a-zA-Z0-9äöüÄÖÜßéèàçÉÈÀÇ\s]", "", text)
     text = text.strip()
-
     return text
 
 
@@ -46,7 +30,6 @@ def clean_news_data(news_df: pd.DataFrame) -> pd.DataFrame:
 
     news_df["headline_clean"] = news_df["headline"].apply(clean_text)
     news_df["description_clean"] = news_df["description"].apply(clean_text)
-
     return news_df
 
 
@@ -57,9 +40,7 @@ def add_text_features(news_df: pd.DataFrame) -> pd.DataFrame:
     news_df["headline_word_count"] = news_df["headline_clean"].str.split().str.len()
 
     news_df["description_length"] = news_df["description_clean"].str.len()
-    news_df["description_word_count"] = (
-        news_df["description_clean"].str.split().str.len()
-    )
+    news_df["description_word_count"] = news_df["description_clean"].str.split().str.len()
 
     return news_df
 
@@ -84,6 +65,14 @@ def add_features(news_df: pd.DataFrame) -> pd.DataFrame:
     return news_df
 
 
+def get_raw_file_for_date(run_date: str, raw_dir: str = "data/raw") -> Path:
+    raw_file = Path(raw_dir) / f"raw_guardian_news_{run_date}.csv"
+
+    if not raw_file.exists():
+        raise FileNotFoundError(f"Raw file not found: {raw_file}")
+    return raw_file
+
+
 def preprocess_news(input_path: str | Path) -> pd.DataFrame:
     news_df = pd.read_csv(input_path)
 
@@ -94,30 +83,40 @@ def preprocess_news(input_path: str | Path) -> pd.DataFrame:
 
 def save_processed_news(
     news_df: pd.DataFrame,
+    run_date: str,
     output_dir: str = "data/processed",
 ) -> str:
     output_folder = Path(output_dir)
     output_folder.mkdir(parents=True, exist_ok=True)
 
-    today = datetime.now().strftime("%Y-%m-%d")
-    output_path = output_folder / f"processed_guardian_news_{today}.csv"
+    output_path = output_folder / f"processed_guardian_news_{run_date}.csv"
 
     news_df.to_csv(output_path, index=False, encoding="utf-8")
 
     return str(output_path)
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--run-date",
+        required=False,
+        default=datetime.now().strftime("%Y-%m-%d"),
+        help="Pipeline run date in YYYY-MM-DD format.",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
-    raw_file = get_latest_raw_file()
+    args = parse_args()
+    run_date = args.run_date
 
+    raw_file = get_raw_file_for_date(run_date)
     print(f"Using raw file: {raw_file}")
-
     processed_df = preprocess_news(raw_file)
-
     print(f"Processed articles: {len(processed_df)}")
-
-    output_path = save_processed_news(processed_df)
-
+    output_path = save_processed_news(processed_df, run_date)
     print(f"Saved processed news to: {output_path}")
 
 

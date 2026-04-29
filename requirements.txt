@@ -10,3 +10,4 @@ streamlit
 apache-airflow
 wandb
 google-cloud-storage
+joblib

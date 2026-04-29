@@ -1,0 +1,79 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            f2sissvjbn8dk543n3lvyxzqdtjy29dd:
+                apple:
+                    ecpuCores: 6
+                    gpuCores: 10
+                    macModel: Mac17,2
+                    memoryGb: 24
+                    name: Apple M5
+                    pcpuCores: 4
+                    ramTotalBytes: "25769803776"
+                    swapTotalBytes: "2147483648"
+                cpu_count: 10
+                cpu_count_logical: 10
+                disk:
+                    /:
+                        total: "494332366848"
+                        used: "214557503488"
+                email: mara.eckart@stud.hslu.ch
+                executable: /Users/maraeckart/dev/hslu/fs26/MLOPS/project/I.BA_MLOPS/.venv/bin/python
+                git:
+                    commit: 207940836df0c80aa7f77aed7dd208a9b07267e5
+                    remote: https://github.com/maraeckart/I.BA_MLOPS.git
+                host: guests-cx-1-476.intern.ethz.ch
+                memory:
+                    total: "25769803776"
+                os: macOS-26.3-arm64-arm-64bit-Mach-O
+                program: -m src.training.model_training
+                python: CPython 3.13.12
+                root: /Users/maraeckart/dev/hslu/fs26/MLOPS/project/I.BA_MLOPS
+                startedAt: "2026-04-29T17:03:38.054069Z"
+                writerId: f2sissvjbn8dk543n3lvyxzqdtjy29dd
+        m: []
+        python_version: 3.13.12
+        t:
+            "1":
+                - 5
+                - 53
+            "2":
+                - 5
+                - 53
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.13.12
+            "5": 0.26.1
+            "12": 0.26.1
+            "13": darwin-arm64
+class_weight:
+    value: balanced
+max_features:
+    value: 5000
+max_iter:
+    value: 1000
+min_df:
+    value: 1
+model_type:
+    value: tfidf_logistic_regression
+ngram_max:
+    value: 2
+ngram_min:
+    value: 1
+num_classes:
+    value: 6
+random_state:
+    value: 42
+target_column:
+    value: category
+test_size:
+    value: 0.2
+text_column:
+    value: headline_clean
+total_articles_before_cleaning:
+    value: 235
+training_rows_after_cleaning:
+    value: 235

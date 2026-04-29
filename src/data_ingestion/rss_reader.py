@@ -28,7 +28,6 @@ def get_description(entry) -> str | None:
 def normalize_entry(
     entry,
     source_name: str,
-    feed_name: str,
     category: str,
 ) -> dict:
 
@@ -38,7 +37,6 @@ def normalize_entry(
         "url": entry.get("link"),
         "published_at": entry.get("published"),
         "source_name": source_name,
-        "feed_name": feed_name,
         "category": category,
         "ingestion_timestamp": datetime.now(timezone.utc).isoformat(),
     }
@@ -48,7 +46,6 @@ def normalize_entry(
 
 def read_rss_feed(source: dict) -> list[dict]:
     source_name = source["source_name"]
-    feed_name = source["feed_name"]
     category = source["category"]
     url = source["url"]
 
@@ -56,7 +53,7 @@ def read_rss_feed(source: dict) -> list[dict]:
 
     if feed.bozo:
         print(
-            f"Warning: feedparser reported an issue for {feed_name}: "
+            f"Warning: feedparser reported an issue for {category}: "
             f"{feed.bozo_exception}"
         )
 
@@ -66,10 +63,7 @@ def read_rss_feed(source: dict) -> list[dict]:
         article = normalize_entry(
             entry=entry,
             source_name=source_name,
-            feed_name=feed_name,
             category=category,
         )
-
         articles.append(article)
-
     return articles

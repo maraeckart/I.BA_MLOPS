@@ -1,0 +1,35 @@
+Loaded articles: 235
+Using target column: category
+Category distribution:
+category
+Culture       62
+Sports        50
+Politics      45
+Economy       35
+Climate       25
+Technology    18
+Name: count, dtype: int64
+Training samples: 188
+Test samples: 47
+
+Model evaluation:
+Accuracy: 0.5532
+Macro F1: 0.5292
+Weighted F1: 0.5445
+
+Classification report:
+              precision    recall  f1-score   support
+
+     Climate       0.67      0.40      0.50         5
+     Culture       0.69      0.75      0.72        12
+     Economy       0.20      0.14      0.17         7
+    Politics       0.55      0.67      0.60         9
+      Sports       0.46      0.60      0.52        10
+  Technology       1.00      0.50      0.67         4
+
+    accuracy                           0.55        47
+   macro avg       0.59      0.51      0.53        47
+weighted avg       0.57      0.55      0.54        47
+
+Saved model to: models/topic_classifier_pipeline.joblib
+Saved metrics to: models/training_metrics_2026-04-29_19-03-43.txt

@@ -1,0 +1,36 @@
+{
+  "os":  "macOS-26.3-arm64-arm-64bit-Mach-O",
+  "python":  "CPython 3.13.12",
+  "startedAt":  "2026-04-29T17:03:38.054069Z",
+  "program":  "-m src.training.model_training",
+  "git":  {
+    "remote":  "https://github.com/maraeckart/I.BA_MLOPS.git",
+    "commit":  "207940836df0c80aa7f77aed7dd208a9b07267e5"
+  },
+  "email":  "mara.eckart@stud.hslu.ch",
+  "root":  "/Users/maraeckart/dev/hslu/fs26/MLOPS/project/I.BA_MLOPS",
+  "host":  "guests-cx-1-476.intern.ethz.ch",
+  "executable":  "/Users/maraeckart/dev/hslu/fs26/MLOPS/project/I.BA_MLOPS/.venv/bin/python",
+  "cpu_count":  10,
+  "cpu_count_logical":  10,
+  "disk":  {
+    "/":  {
+      "total":  "494332366848",
+      "used":  "214557503488"
+    }
+  },
+  "memory":  {
+    "total":  "25769803776"
+  },
+  "apple":  {
+    "name":  "Apple M5",
+    "ecpuCores":  6,
+    "pcpuCores":  4,
+    "gpuCores":  10,
+    "memoryGb":  24,
+    "swapTotalBytes":  "2147483648",
+    "ramTotalBytes":  "25769803776",
+    "macModel":  "Mac17,2"
+  },
+  "writerId":  "f2sissvjbn8dk543n3lvyxzqdtjy29dd"
+}

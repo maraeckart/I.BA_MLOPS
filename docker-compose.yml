@@ -16,3 +16,18 @@ services:
     environment:
       - PYTHONPATH=/app
     command: python -m src.preprocessing.preprocess_news
+  
+  airflow:
+    build: .
+    container_name: guardian-news-airflow
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+      - AIRFLOW_HOME=/app/airflow_home
+      - AIRFLOW__CORE__DAGS_FOLDER=/app/airflow/dags
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    ports:
+      - "8080:8080"
+    command: airflow standalone

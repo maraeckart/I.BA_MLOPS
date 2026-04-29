@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime
 from pathlib import Path
 
@@ -17,20 +18,27 @@ def load_sources(config_path: str = "configs/sources.yaml") -> list[dict]:
 
 
 def collect_source_news(source: dict) -> list[dict]:
-    feed_name = source["feed_name"]
+    category = source["category"]
 
-    print(f"Collecting articles from {feed_name}...")
+    print(f"Collecting articles from {category}...")
 
     try:
         articles = read_rss_feed(source)
-        print(f"Collected {len(articles)} articles from {feed_name}.")
+        print(f"Collected {len(articles)} articles from {category}.")
 
         return articles
 
     except Exception as error:
-        print(f"Failed to collect articles from {feed_name}: {error}")
-
+        print(f"Failed to collect articles from {category}: {error}")
         return []
+
+
+def remove_duplicates(news_df: pd.DataFrame) -> pd.DataFrame:
+    news_df = news_df.drop_duplicates(
+        subset=["headline", "url"],
+        keep="first",
+    )
+    return news_df
 
 
 def collect_all_news(config_path: str = "configs/sources.yaml") -> pd.DataFrame:
@@ -47,42 +55,49 @@ def collect_all_news(config_path: str = "configs/sources.yaml") -> pd.DataFrame:
         return news_df
 
     news_df = remove_duplicates(news_df)
-
     return news_df
 
 
-def remove_duplicates(news_df: pd.DataFrame) -> pd.DataFrame:
-    news_df = news_df.drop_duplicates(
-        subset=["headline", "url"],
-        keep="first",
-    )
-    return news_df
-
-
-def save_raw_news(news_df: pd.DataFrame, output_dir: str = "data/raw") -> str:
+def save_raw_news(
+    news_df: pd.DataFrame,
+    run_date: str,
+    output_dir: str = "data/raw",
+) -> str:
     output_folder = Path(output_dir)
     output_folder.mkdir(parents=True, exist_ok=True)
 
-    today = datetime.now().strftime("%Y-%m-%d")
-    output_path = output_folder / f"raw_guardian_news_{today}.csv"
+    output_path = output_folder / f"raw_guardian_news_{run_date}.csv"
 
     news_df.to_csv(output_path, index=False, encoding="utf-8")
     return str(output_path)
 
 
-def main() -> None:
-    news_df = collect_all_news()
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
 
+    parser.add_argument(
+        "--run-date",
+        required=False,
+        default=datetime.now().strftime("%Y-%m-%d"),
+        help="Pipeline run date in YYYY-MM-DD format.",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    run_date = args.run_date
+
+    news_df = collect_all_news()
     print(f"Total collected articles after duplicate removal: {len(news_df)}")
 
     if news_df.empty:
         print("No articles collected. No file saved.")
         return
 
-    output_path = save_raw_news(news_df)
+    output_path = save_raw_news(news_df, run_date)
 
     print(f"Saved raw news to: {output_path}")
-
 
 if __name__ == "__main__":
     main()
