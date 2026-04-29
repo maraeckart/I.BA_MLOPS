@@ -1,0 +1,18 @@
+services:
+  ingest-news:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+    command: python -m src.data_ingestion.collect_news
+
+  preprocess-news:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+    command: python -m src.preprocessing.preprocess_news

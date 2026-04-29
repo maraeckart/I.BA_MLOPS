@@ -1,0 +1,40 @@
+# sources:
+#   - name: euronews
+#     url: "https://www.euronews.com/rss"
+
+#   - name: guardian_world
+#     url: "https://www.theguardian.com/world/rss"
+
+#   - name: guardian_eu
+#     url: "https://www.theguardian.com/world/europe-news/rss"
+
+sources:
+  - source_name: guardian
+    feed_name: guardian_world
+    category: Politics
+    url: "https://www.theguardian.com/world/rss"
+
+  - source_name: guardian
+    feed_name: guardian_business
+    category: Economy
+    url: "https://www.theguardian.com/business/rss"
+
+  - source_name: guardian
+    feed_name: guardian_technology
+    category: Technology
+    url: "https://www.theguardian.com/technology/rss"
+
+  - source_name: guardian
+    feed_name: guardian_environment
+    category: Climate
+    url: "https://www.theguardian.com/environment/rss"
+
+  - source_name: guardian
+    feed_name: guardian_sport
+    category: Sports
+    url: "https://www.theguardian.com/sport/rss"
+
+  - source_name: guardian
+    feed_name: guardian_culture
+    category: Culture
+    url: "https://www.theguardian.com/culture/rss"

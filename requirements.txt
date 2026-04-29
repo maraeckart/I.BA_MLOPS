@@ -1,0 +1,12 @@
+pandas
+feedparser
+pyyaml
+scikit-learn
+python-dotenv
+beautifulsoup4
+fastapi
+uvicorn
+streamlit
+apache-airflow
+wandb
+google-cloud-storage
