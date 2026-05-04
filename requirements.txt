@@ -11,3 +11,5 @@ apache-airflow
 wandb
 google-cloud-storage
 joblib
+requests
+python-dotenv

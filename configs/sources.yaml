@@ -12,23 +12,31 @@ sources:
   - source_name: guardian
     category: Politics
     url: "https://www.theguardian.com/world/rss"
+    api_section: "world"
 
   - source_name: guardian
     category: Economy
     url: "https://www.theguardian.com/business/rss"
+    api_section: "business"
 
   - source_name: guardian
     category: Technology
     url: "https://www.theguardian.com/technology/rss"
+    api_section: "technology"
 
   - source_name: guardian
     category: Climate
     url: "https://www.theguardian.com/environment/rss"
+    api_section: "environment"
 
   - source_name: guardian
     category: Sports
     url: "https://www.theguardian.com/sport/rss"
+    api_section: "sport"
 
   - source_name: guardian
     category: Culture
     url: "https://www.theguardian.com/culture/rss"
+    api_section: "culture"
+
+

@@ -3,7 +3,6 @@ from datetime import datetime, timezone
 import feedparser
 from bs4 import BeautifulSoup
 
-
 def clean_html(raw_html: str | None) -> str | None:
     if raw_html is None:
         return None
@@ -12,7 +11,6 @@ def clean_html(raw_html: str | None) -> str | None:
     text = soup.get_text(separator=" ", strip=True)
 
     return text
-
 
 def get_description(entry) -> str | None:
     description = entry.get("description")
@@ -23,7 +21,6 @@ def get_description(entry) -> str | None:
     description = clean_html(description)
 
     return description
-
 
 def normalize_entry(
     entry,
@@ -42,7 +39,6 @@ def normalize_entry(
     }
 
     return article
-
 
 def read_rss_feed(source: dict) -> list[dict]:
     source_name = source["source_name"]

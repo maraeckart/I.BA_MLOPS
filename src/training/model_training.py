@@ -18,13 +18,14 @@ WANDB_PROJECT = "guardian-news-topic-classification"
 
 def get_processed_files(processed_dir: str = "data/processed") -> list[Path]:
     processed_folder = Path(processed_dir)
-    processed_files = list(processed_folder.glob("processed_guardian_news_*.csv"))
+
+    processed_files = []
+    processed_files.extend(processed_folder.glob("processed_guardian_news_*.csv"))
+    processed_files.extend(processed_folder.glob("api/processed_guardian_api_*.csv"))
 
     if not processed_files:
         raise FileNotFoundError("No processed Guardian news files found.")
-
     return processed_files
-
 
 def load_training_data(processed_dir: str = "data/processed") -> pd.DataFrame:
     processed_files = get_processed_files(processed_dir)

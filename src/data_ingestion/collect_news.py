@@ -16,7 +16,6 @@ def load_sources(config_path: str = "configs/sources.yaml") -> list[dict]:
 
     return sources
 
-
 def collect_source_news(source: dict) -> list[dict]:
     category = source["category"]
 
@@ -32,14 +31,12 @@ def collect_source_news(source: dict) -> list[dict]:
         print(f"Failed to collect articles from {category}: {error}")
         return []
 
-
 def remove_duplicates(news_df: pd.DataFrame) -> pd.DataFrame:
     news_df = news_df.drop_duplicates(
         subset=["headline", "url"],
         keep="first",
     )
     return news_df
-
 
 def collect_all_news(config_path: str = "configs/sources.yaml") -> pd.DataFrame:
     sources = load_sources(config_path)
@@ -57,7 +54,6 @@ def collect_all_news(config_path: str = "configs/sources.yaml") -> pd.DataFrame:
     news_df = remove_duplicates(news_df)
     return news_df
 
-
 def save_raw_news(
     news_df: pd.DataFrame,
     run_date: str,
@@ -71,7 +67,6 @@ def save_raw_news(
     news_df.to_csv(output_path, index=False, encoding="utf-8")
     return str(output_path)
 
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
@@ -82,7 +77,6 @@ def parse_args() -> argparse.Namespace:
         help="Pipeline run date in YYYY-MM-DD format.",
     )
     return parser.parse_args()
-
 
 def main() -> None:
     args = parse_args()
