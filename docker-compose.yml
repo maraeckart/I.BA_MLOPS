@@ -27,6 +27,7 @@ services:
     volumes:
       - .:/app
       - ~/.config/gcloud/application_default_credentials.json:/root/.config/gcloud/application_default_credentials.json:ro
+      - /Users/maraeckart/.netrc:/root/.netrc:ro
     working_dir: /app
     environment:
       - PYTHONPATH=/app

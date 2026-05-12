@@ -1,0 +1,24 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            v9sct6ir31srx6mcogyxkuqhtagm3bop:
+                email: mara.eckart@stud.hslu.ch
+                executable: /usr/local/bin/python
+                host: 48e1db200f3b
+                os: Linux-6.12.69-linuxkit-aarch64-with-glibc2.41
+                program: <stdin>
+                python: CPython 3.13.13
+                root: /app
+                startedAt: "2026-05-12T13:14:38.053675Z"
+                writerId: v9sct6ir31srx6mcogyxkuqhtagm3bop
+        m: []
+        python_version: 3.13.13
+        t:
+            "3":
+                - 2
+                - 13
+            "4": 3.13.13
+            "5": 0.26.1
+            "12": 0.26.1
+            "13": linux-aarch64

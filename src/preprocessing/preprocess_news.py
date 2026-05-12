@@ -314,11 +314,23 @@ def add_region_feature(news_df: pd.DataFrame) -> pd.DataFrame:
 
     return news_df
 
+def add_topic_text(news_df: pd.DataFrame) -> pd.DataFrame:
+    news_df = news_df.copy()
+
+    news_df["topic_text"] = (
+        news_df["headline_clean"].fillna("")
+        + " "
+        + news_df["description_clean"].fillna("")
+    ).str.strip()
+
+    return news_df
+
 
 def add_features(news_df: pd.DataFrame) -> pd.DataFrame:
     news_df = add_text_features(news_df)
     news_df = add_time_features(news_df)
     news_df = add_region_feature(news_df)
+    news_df = add_topic_text(news_df)
     return news_df
 
 

@@ -1,0 +1,85 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            m6vfxplhinrqj1ovfz29ucavll2m3z1f:
+                apple:
+                    ecpuCores: 6
+                    gpuCores: 10
+                    macModel: Mac17,2
+                    memoryGb: 24
+                    name: Apple M5
+                    pcpuCores: 4
+                    ramTotalBytes: "25769803776"
+                args:
+                    - --run-date
+                    - "2026-05-12"
+                cpu_count: 10
+                cpu_count_logical: 10
+                disk:
+                    /:
+                        total: "494332366848"
+                        used: "214673309696"
+                email: mara.eckart@stud.hslu.ch
+                executable: /Users/maraeckart/dev/hslu/fs26/MLOPS/project/I.BA_MLOPS/.venv/bin/python
+                git:
+                    commit: 3497159482ad6be210362b740047d64206f3d85a
+                    remote: https://github.com/maraeckart/I.BA_MLOPS.git
+                host: MacBook-Pro-von-Mara.local
+                memory:
+                    total: "25769803776"
+                os: macOS-26.3-arm64-arm-64bit-Mach-O
+                program: -m src.training.training_topic_model
+                python: CPython 3.13.12
+                root: /Users/maraeckart/dev/hslu/fs26/MLOPS/project/I.BA_MLOPS
+                startedAt: "2026-05-12T11:55:37.662252Z"
+                writerId: m6vfxplhinrqj1ovfz29ucavll2m3z1f
+        m: []
+        python_version: 3.13.12
+        t:
+            "1":
+                - 5
+                - 53
+            "2":
+                - 5
+                - 53
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.13.12
+            "5": 0.26.1
+            "12": 0.26.1
+            "13": darwin-arm64
+algorithm:
+    value: nmf
+max_df:
+    value: 0.9
+max_features:
+    value: 3000
+max_iter:
+    value: 500
+min_df:
+    value: 1
+model_type:
+    value: unsupervised_topic_modeling
+n_topics:
+    value: 7
+ngram_max:
+    value: 2
+ngram_min:
+    value: 1
+num_processed_files:
+    value: 4
+random_state:
+    value: 42
+run_date:
+    value: "2026-05-12"
+text_column:
+    value: topic_text
+top_n_keywords:
+    value: 10
+total_articles_before_text_filtering:
+    value: 5256
+training_rows_after_text_filtering:
+    value: 5256

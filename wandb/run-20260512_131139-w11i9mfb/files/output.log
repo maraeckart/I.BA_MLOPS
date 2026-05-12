@@ -1,0 +1,19 @@
+Loaded articles: 5256
+Using text column: topic_text
+Reconstruction error: 71.0189
+Vocabulary size: 3000
+
+Discovered topics:
+Topic 0: oil, middle, east, middle east, prices, energy, fuel, uk, crisis, war
+Topic 1: ai, new, uk, says, say, people, country, years, continue, government
+Topic 2: ukraine, ukraine war, war briefing, briefing, know day, day, know, war, says, zelenskyy
+Topic 3: winter, olympics, winter olympics, gold, olympic, games, medal, cortina, milano, milano cortina
+Topic 4: closed, blog, blog closed, happened, happened blog, live, happened live, live blog, israel, lebanon
+Topic 5: england, world, cup, world cup, nations, t20, t20 world, win, scotland, wales
+Topic 6: iran, war, trump, iran war, trumps, strait, war iran, president, hormuz, says
+/Users/maraeckart/dev/hslu/fs26/MLOPS/project/I.BA_MLOPS/src/training/training_topic_model.py:354: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "created_at": datetime.utcnow().isoformat(),
+Saved model to: models/topic_model/2026-05-12/nmf_topic_model.joblib
+Saved vectorizer to: models/topic_model/2026-05-12/tfidf_vectorizer.joblib
+Saved metadata to: models/topic_model/2026-05-12/topic_metadata.json
+Saved training topic assignments to: data/predictions/topic_assignments_training_2026-05-12.csv

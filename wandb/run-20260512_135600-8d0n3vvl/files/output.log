@@ -1,0 +1,27 @@
+Loaded articles: 5256
+Using text column: topic_text
+Reconstruction error: 70.1473
+Vocabulary size: 3000
+
+Discovered topics:
+Topic 0: uk, energy, prices, oil, fuel, gas, costs, price, iran war, inflation
+Topic 1: say, people, continue, reading, continue reading, years, media, social, experts, social media
+Topic 2: ukraine, ukraine war, war briefing, briefing, know day, day, know, war, russian, zelenskyy
+Topic 3: winter, olympics, winter olympics, gold, olympic, games, medal, cortina, milano, milano cortina
+Topic 4: closed, blog, blog closed, happened, happened blog, live, happened live, live blog, israel, strikes
+Topic 5: world, cup, world cup, t20, t20 world, india, england, win, australia, cricket
+Topic 6: says, president, trump, talks, minister, president says, trump says, foreign, deal, chief
+Topic 7: country, country diary, diary, spring, long, st, im, walk, garden, rare
+Topic 8: england, nations, wales, ireland, france, scotland, italy, borthwick, rugby, steve
+Topic 9: iran, war, iran war, trump, war iran, trumps, israel, strikes, latenight, conflict
+Topic 10: east, middle, middle east, conflict, crisis, east conflict, east war, east crisis, region, oil
+Topic 11: ai, tech, firm, workers, intelligence, artificial intelligence, artificial, work, company, use
+Topic 12: economic, coverage, rolling, financial, latest economic, coverage latest, economic financial, financial news, rolling coverage, news
+Topic 13: strait, hormuz, strait hormuz, oil, iran, shipping, blockade, reopen, trump, reopen strait
+Topic 14: new, zealand, new zealand, york, new york, super, patriots, bowl, super bowl, year
+/Users/maraeckart/dev/hslu/fs26/MLOPS/project/I.BA_MLOPS/src/training/training_topic_model.py:354: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "created_at": datetime.utcnow().isoformat(),
+Saved model to: models/topic_model/2026-05-12/nmf_topic_model.joblib
+Saved vectorizer to: models/topic_model/2026-05-12/tfidf_vectorizer.joblib
+Saved metadata to: models/topic_model/2026-05-12/topic_metadata.json
+Saved training topic assignments to: data/predictions/topic_assignments_training_2026-05-12.csv

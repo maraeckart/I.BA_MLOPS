@@ -1,0 +1,15 @@
+model:
+  type: "topic_modeling"
+  algorithm: "nmf"
+  n_topics: 15
+  max_features: 3000
+  min_df: 1
+  max_df: 0.9
+  ngram_min: 1
+  ngram_max: 2
+  random_state: 42
+  max_iter: 500
+  top_n_keywords: 10
+
+text:
+  text_column: "topic_text"
