@@ -3,12 +3,21 @@ __pycache__/
 .ipynb_checkpoints/
 
 .env
+*.json
 
-data/raw/*.csv
-data/processed/*.csv
-data/predictions/*.csv
+data/raw/
+data/processed/
+data/features/
+data/predictions/
+data/test/
 
-models/*.pkl
-models/*.joblib
+models/
+
 airflow_home/
+
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/terraform.tfvars
+
 .DS_Store

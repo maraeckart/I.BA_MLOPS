@@ -8,6 +8,7 @@ import yaml
 from src.data_ingestion.rss_reader import read_rss_feed
 
 
+
 def load_sources(config_path: str = "configs/sources.yaml") -> list[dict]:
     with open(config_path, "r", encoding="utf-8") as file:
         config = yaml.safe_load(file)
@@ -88,10 +89,15 @@ def main() -> None:
     if news_df.empty:
         print("No articles collected. No file saved.")
         return
-
-    output_path = save_raw_news(news_df, run_date)
-
+##path needs to be checked!!
+    output_path = save_raw_news(
+        news_df=news_df,
+        run_date=run_date,
+        output_dir="data/raw/rss/live",
+    )
     print(f"Saved raw news to: {output_path}")
+
 
 if __name__ == "__main__":
     main()
+

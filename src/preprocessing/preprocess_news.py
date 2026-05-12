@@ -4,6 +4,8 @@ from pathlib import Path
 import re
 
 import pandas as pd
+from src.storage.gcs_client import GCSClient
+from src.utils.config import load_yaml_config
 
 REGION_KEYWORDS = {
     "World": ["world", "global", "international", "worldwide"],
@@ -320,7 +322,7 @@ def add_features(news_df: pd.DataFrame) -> pd.DataFrame:
     return news_df
 
 
-def get_raw_file_for_date(run_date: str, raw_dir: str = "data/raw") -> Path:
+def get_raw_file_for_date(run_date: str, raw_dir: str = "data/raw/rss/live") -> Path:
     raw_file = Path(raw_dir) / f"raw_guardian_news_{run_date}.csv"
 
     if not raw_file.exists():
@@ -351,9 +353,10 @@ def save_processed_news(
 
 
 def get_default_output_path(run_date: str) -> Path:
-    output_path = Path("data/processed") / f"processed_guardian_news_{run_date}.csv"
+    output_path = Path("data/processed/live") / f"processed_guardian_news_{run_date}.csv"
 
     return output_path
+
 
 
 def get_api_output_path(input_path: str | Path) -> Path:
@@ -426,7 +429,6 @@ def main() -> None:
         news_df=processed_df,
         output_path=output_path,
     )
-
     print(f"Saved processed news to: {saved_path}")
 
 

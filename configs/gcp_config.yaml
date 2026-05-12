@@ -1,0 +1,20 @@
+gcp:
+  project_id: "mlops-news-headlines"
+  bucket_name: "mlops-news-headlines-mara-2026"
+
+paths:
+  raw_rss_live: "raw/rss/live"
+  raw_rss_backfill: "raw/rss/backfill"
+
+  raw_api_live: "raw/api/live"
+  raw_api_backfill: "raw/api/backfill"
+
+  processed_live: "processed/live"
+  processed_backfill: "processed/backfill"
+
+  features_live: "features/live"
+  features_backfill: "features/backfill"
+
+  models: "models"
+  predictions: "predictions"
+  logs: "logs"
