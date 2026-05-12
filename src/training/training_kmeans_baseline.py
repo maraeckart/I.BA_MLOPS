@@ -6,7 +6,7 @@ from pathlib import Path
 import joblib
 import pandas as pd
 import wandb
-from sklearn.decomposition import NMF
+from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from src.utils.config import load_yaml_config
@@ -54,17 +54,18 @@ def load_training_data(processed_dir: str = "data/processed") -> pd.DataFrame:
     return combined_df
 
 
-def prepare_text_data(news_df: pd.DataFrame, text_column: str) -> pd.Series:
+def prepare_text_data(news_df: pd.DataFrame, text_column: str) -> tuple[pd.DataFrame, pd.Series]:
     if text_column not in news_df.columns:
         raise ValueError(f"Missing text column: {text_column}")
 
-    texts = news_df[text_column].fillna("").astype(str)
-    texts = texts[texts.str.strip().str.len() > 0]
+    usable_index = news_df[text_column].fillna("").astype(str).str.strip().str.len() > 0
+    filtered_df = news_df.loc[usable_index].copy()
+    texts = filtered_df[text_column].fillna("").astype(str)
 
     if texts.empty:
-        raise ValueError("No usable text data found for topic modeling.")
+        raise ValueError("No usable text data found for KMeans baseline.")
 
-    return texts
+    return filtered_df, texts
 
 
 def build_vectorizer(
@@ -84,44 +85,56 @@ def build_vectorizer(
     )
 
 
-def build_topic_model(
+def build_kmeans_model(
     n_topics: int,
     random_state: int,
     max_iter: int,
-) -> NMF:
-    return NMF(
-        n_components=n_topics,
-        init="nndsvda",
+) -> KMeans:
+    return KMeans(
+        n_clusters=n_topics,
         random_state=random_state,
         max_iter=max_iter,
+        n_init="auto",
     )
 
 
-def get_topic_keywords(
-    model: NMF,
+def get_cluster_keywords(
+    model: KMeans,
     vectorizer: TfidfVectorizer,
     top_n: int = 10,
 ) -> dict[str, list[str]]:
     feature_names = vectorizer.get_feature_names_out()
-    topic_keywords = {}
+    cluster_keywords = {}
 
-    for topic_idx, topic_weights in enumerate(model.components_):
-        top_indices = topic_weights.argsort()[-top_n:][::-1]
+    for cluster_idx, cluster_weights in enumerate(model.cluster_centers_):
+        top_indices = cluster_weights.argsort()[-top_n:][::-1]
         keywords = [feature_names[i] for i in top_indices]
-        topic_keywords[str(topic_idx)] = keywords
+        cluster_keywords[str(cluster_idx)] = keywords
 
-    return topic_keywords
-
-
-def assign_topics(topic_matrix) -> tuple[list[int], list[float]]:
-    topic_ids = topic_matrix.argmax(axis=1).tolist()
-    topic_scores = topic_matrix.max(axis=1).tolist()
-
-    return topic_ids, topic_scores
+    return cluster_keywords
 
 
-def save_topic_artifacts(
-    model: NMF,
+def assign_clusters(model: KMeans, tfidf_matrix) -> tuple[list[int], list[float]]:
+    cluster_ids = model.predict(tfidf_matrix).tolist()
+
+    # KMeans does not produce topic probabilities.
+    # This score is a simple distance-based confidence proxy:
+    # smaller distance = closer to assigned cluster center.
+    distances = model.transform(tfidf_matrix)
+    min_distances = distances.min(axis=1)
+
+    max_distance = min_distances.max()
+
+    if max_distance == 0:
+        cluster_scores = [1.0 for _ in min_distances]
+    else:
+        cluster_scores = (1 - (min_distances / max_distance)).tolist()
+
+    return cluster_ids, cluster_scores
+
+
+def save_kmeans_artifacts(
+    model: KMeans,
     vectorizer: TfidfVectorizer,
     metadata: dict,
     output_dir: str | Path,
@@ -129,7 +142,7 @@ def save_topic_artifacts(
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    model_path = output_dir / "nmf_topic_model.joblib"
+    model_path = output_dir / "kmeans_topic_model.joblib"
     vectorizer_path = output_dir / "tfidf_vectorizer.joblib"
     metadata_path = output_dir / "topic_metadata.json"
 
@@ -146,11 +159,11 @@ def save_topic_artifacts(
     }
 
 
-def save_topic_assignments(
+def save_cluster_assignments(
     news_df: pd.DataFrame,
-    topic_ids: list[int],
-    topic_scores: list[float],
-    topic_keywords: dict[str, list[str]],
+    cluster_ids: list[int],
+    cluster_scores: list[float],
+    cluster_keywords: dict[str, list[str]],
     output_path: str | Path,
 ) -> str:
     output_path = Path(output_path)
@@ -158,14 +171,11 @@ def save_topic_assignments(
 
     result_df = news_df.copy()
 
-    usable_index = result_df["topic_text"].fillna("").astype(str).str.strip().str.len() > 0
-    result_df = result_df.loc[usable_index].copy()
-
-    result_df["topic_id"] = topic_ids
-    result_df["topic_score"] = topic_scores
+    result_df["topic_id"] = cluster_ids
+    result_df["topic_score"] = cluster_scores
     result_df["topic_keywords"] = [
-        ", ".join(topic_keywords[str(topic_id)])
-        for topic_id in topic_ids
+        ", ".join(cluster_keywords[str(cluster_id)])
+        for cluster_id in cluster_ids
     ]
 
     result_df.to_csv(output_path, index=False, encoding="utf-8")
@@ -175,9 +185,9 @@ def save_topic_assignments(
 
 def log_dataset_artifact(run, processed_files: list[Path]) -> None:
     artifact = wandb.Artifact(
-        name="processed-news-topic-data",
+        name="processed-news-topic-data-kmeans-baseline",
         type="dataset",
-        description="Processed news files used for unsupervised topic modeling.",
+        description="Processed news files used for KMeans topic baseline.",
     )
 
     for file_path in processed_files:
@@ -193,9 +203,9 @@ def log_model_artifact(
     metadata_path: str,
 ) -> None:
     artifact = wandb.Artifact(
-        name="nmf-topic-model",
+        name="kmeans-topic-baseline",
         type="model",
-        description="TF-IDF vectorizer and NMF topic model for unsupervised news topic modeling.",
+        description="TF-IDF vectorizer and KMeans clustering baseline for news topic modeling.",
     )
 
     artifact.add_file(model_path)
@@ -205,13 +215,13 @@ def log_model_artifact(
     run.log_artifact(artifact)
 
 
-def log_topic_keywords(
+def log_cluster_keywords(
     run,
-    topic_keywords: dict[str, list[str]],
+    cluster_keywords: dict[str, list[str]],
 ) -> None:
     rows = []
 
-    for topic_id, keywords in topic_keywords.items():
+    for topic_id, keywords in cluster_keywords.items():
         rows.append(
             {
                 "topic_id": int(topic_id),
@@ -223,12 +233,12 @@ def log_topic_keywords(
     run.log({"topic_keywords": table})
 
 
-def log_topic_distribution(
+def log_cluster_distribution(
     run,
-    topic_ids: list[int],
+    cluster_ids: list[int],
 ) -> None:
     topic_counts = (
-        pd.Series(topic_ids)
+        pd.Series(cluster_ids)
         .value_counts()
         .sort_index()
         .reset_index()
@@ -242,7 +252,7 @@ def log_topic_distribution(
         run.log({f"topic_count/topic_{row.topic_id}": row.count})
 
 
-def train_topic_model(
+def train_kmeans_baseline(
     run_date: str,
     processed_dir: str = "data/processed",
 ) -> dict[str, str]:
@@ -251,8 +261,8 @@ def train_topic_model(
     text_column = model_config["text"]["text_column"]
 
     config = {
-        "model_type": "unsupervised_topic_modeling",
-        "algorithm": model_config["model"]["algorithm"],
+        "model_type": "unsupervised_topic_modeling_baseline",
+        "algorithm": "kmeans",
         "text_column": text_column,
         "n_topics": model_config["model"]["n_topics"],
         "max_features": model_config["model"]["max_features"],
@@ -261,14 +271,14 @@ def train_topic_model(
         "ngram_min": model_config["model"].get("ngram_min", 1),
         "ngram_max": model_config["model"].get("ngram_max", 2),
         "random_state": model_config["model"]["random_state"],
-        "max_iter": model_config["model"].get("max_iter", 500),
+        "max_iter": model_config["model"].get("max_iter", 300),
         "top_n_keywords": model_config["model"].get("top_n_keywords", 10),
         "run_date": run_date,
     }
 
     run = wandb.init(
         project=WANDB_PROJECT,
-        name=f"nmf-topic-model-{run_date}-{datetime.now().strftime('%H-%M-%S')}",
+        name=f"kmeans-baseline-{run_date}-{datetime.now().strftime('%H-%M-%S')}",
         config=config,
     )
 
@@ -279,7 +289,7 @@ def train_topic_model(
         print(f"Loaded articles: {len(news_df)}")
         print(f"Using text column: {text_column}")
 
-        texts = prepare_text_data(news_df, text_column)
+        filtered_df, texts = prepare_text_data(news_df, text_column)
 
         run.config.update(
             {
@@ -301,71 +311,75 @@ def train_topic_model(
 
         tfidf_matrix = vectorizer.fit_transform(texts)
 
-        model = build_topic_model(
+        model = build_kmeans_model(
             n_topics=config["n_topics"],
             random_state=config["random_state"],
             max_iter=config["max_iter"],
         )
 
-        topic_matrix = model.fit_transform(tfidf_matrix)
+        model.fit(tfidf_matrix)
 
-        topic_keywords = get_topic_keywords(
+        cluster_keywords = get_cluster_keywords(
             model=model,
             vectorizer=vectorizer,
             top_n=config["top_n_keywords"],
         )
 
-        topic_ids, topic_scores = assign_topics(topic_matrix)
+        cluster_ids, cluster_scores = assign_clusters(model, tfidf_matrix)
 
-        reconstruction_error = model.reconstruction_err_
         vocabulary_size = len(vectorizer.get_feature_names_out())
+        inertia = model.inertia_
+        mean_cluster_score = sum(cluster_scores) / len(cluster_scores)
 
-        print(f"Reconstruction error: {reconstruction_error:.4f}")
+        print(f"KMeans inertia: {inertia:.4f}")
         print(f"Vocabulary size: {vocabulary_size}")
 
-        print("\nDiscovered topics:")
-        for topic_id, keywords in topic_keywords.items():
+        print("\nDiscovered KMeans baseline topics:")
+        for topic_id, keywords in cluster_keywords.items():
             print(f"Topic {topic_id}: {', '.join(keywords)}")
 
         run.log(
             {
-                "reconstruction_error": reconstruction_error,
+                "kmeans_inertia": inertia,
                 "vocabulary_size": vocabulary_size,
                 "num_topics": config["n_topics"],
-                "mean_topic_score": sum(topic_scores) / len(topic_scores),
+                "mean_topic_score": mean_cluster_score,
             }
         )
 
-        log_topic_keywords(run, topic_keywords)
-        log_topic_distribution(run, topic_ids)
+        log_cluster_keywords(run, cluster_keywords)
+        log_cluster_distribution(run, cluster_ids)
 
-        output_dir = Path("models/topic_model") / run_date
-        assignments_path = Path("data/predictions") / f"topic_assignments_training_{run_date}.csv"
+        output_dir = Path("models/topic_model_kmeans_baseline") / run_date
+        assignments_path = (
+            Path("data/predictions")
+            / f"kmeans_topic_assignments_training_{run_date}.csv"
+        )
 
         metadata = {
             "run_date": run_date,
-            "model_type": "unsupervised_topic_modeling",
-            "algorithm": "nmf",
+            "model_type": "unsupervised_topic_modeling_baseline",
+            "algorithm": "kmeans",
             "n_topics": config["n_topics"],
             "text_column": text_column,
-            "topic_keywords": topic_keywords,
-            "reconstruction_error": reconstruction_error,
+            "topic_keywords": cluster_keywords,
+            "kmeans_inertia": inertia,
             "vocabulary_size": vocabulary_size,
             "created_at": datetime.utcnow().isoformat(),
         }
 
-        artifact_paths = save_topic_artifacts(
+        artifact_paths = save_kmeans_artifacts(
             model=model,
             vectorizer=vectorizer,
             metadata=metadata,
             output_dir=output_dir,
         )
 
-        assignments_path = save_topic_assignments(
-            news_df=news_df,
-            topic_ids=topic_ids,
-            topic_scores=topic_scores,
-            topic_keywords=topic_keywords,
+        assignments_path = save_cluster_assignments(
+            news_df=filtered_df,
+            cluster_ids=cluster_ids,
+            cluster_scores=cluster_scores,
+            cluster_keywords=cluster_keywords,
             output_path=assignments_path,
         )
 
@@ -377,17 +391,17 @@ def train_topic_model(
         )
 
         prediction_artifact = wandb.Artifact(
-            name="training-topic-assignments",
+            name="kmeans-training-topic-assignments",
             type="predictions",
-            description="Topic assignments generated on the training dataset.",
+            description="KMeans topic assignments generated on the training dataset.",
         )
         prediction_artifact.add_file(assignments_path)
         run.log_artifact(prediction_artifact)
 
-        print(f"Saved model to: {artifact_paths['model_path']}")
+        print(f"Saved KMeans model to: {artifact_paths['model_path']}")
         print(f"Saved vectorizer to: {artifact_paths['vectorizer_path']}")
         print(f"Saved metadata to: {artifact_paths['metadata_path']}")
-        print(f"Saved training topic assignments to: {assignments_path}")
+        print(f"Saved KMeans training topic assignments to: {assignments_path}")
 
         return {
             **artifact_paths,
@@ -421,7 +435,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    train_topic_model(
+    train_kmeans_baseline(
         run_date=args.run_date,
         processed_dir=args.processed_dir,
     )

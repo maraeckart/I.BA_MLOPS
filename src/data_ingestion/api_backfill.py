@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 # - load API key
 # - load configured Guardian sections
-# - request articles for each category
+# - request articles for each source_section
 # - normalize API results
 # - remove duplicates
 # - save CSV file
@@ -113,7 +113,9 @@ def normalize_api_result(result: dict, source: dict) -> dict:
         "url": result.get("webUrl"),
         "published_at": result.get("webPublicationDate"),
         "source_name": source["source_name"],
-        "category": source["category"],
+        "source_section": source["source_section"],
+        "country": source.get("country"),
+        "language": source.get("language"),
         "ingestion_timestamp": datetime.utcnow().isoformat(),
     }
 
@@ -129,10 +131,10 @@ def collect_source_articles(
     sleep_seconds: float,
     max_pages: int | None,
 ) -> list[dict]:
-    category = source["category"]
+    source_section = source["source_section"]
     api_section = source["api_section"]
 
-    print(f"Collecting {category} from API section '{api_section}'...")
+    print(f"Collecting {source_section} from API section '{api_section}'...")
 
     articles = []
     page = 1
@@ -140,7 +142,7 @@ def collect_source_articles(
 
     while page <= total_pages:
         if max_pages is not None and page > max_pages:
-            print(f"Reached max_pages={max_pages} for {category}.")
+            print(f"Reached max_pages={max_pages} for {source_section}.")
             break
 
         params = build_request_params(
@@ -159,7 +161,7 @@ def collect_source_articles(
         results = response_data.get("results", [])
 
         print(
-            f"{category}: page {page}/{total_pages}, "
+            f"{source_section}: page {page}/{total_pages}, "
             f"articles on page: {len(results)}"
         )
 
@@ -172,7 +174,7 @@ def collect_source_articles(
         if sleep_seconds > 0:
             time.sleep(sleep_seconds)
 
-    print(f"Collected {len(articles)} articles for {category}.")
+    print(f"Collected {len(articles)} articles for {source_section}.")
 
     return articles
 
@@ -274,7 +276,7 @@ def parse_args() -> argparse.Namespace:
         "--max-pages",
         type=int,
         default=None,
-        help="Optional maximum pages per category for testing.",
+        help="Optional maximum pages per source_section for testing.",
     )
 
     return parser.parse_args()

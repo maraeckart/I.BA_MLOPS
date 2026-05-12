@@ -1,10 +1,10 @@
 model:
   type: "topic_modeling"
   algorithm: "nmf"
-  n_topics: 15
-  max_features: 3000
-  min_df: 1
-  max_df: 0.9
+  n_topics: 6 #[6,8,10,11,12,13,15]
+  max_features: 3000 #[2000,10000]
+  min_df: 2
+  max_df: 0.9 #[0.8, 0.9, 0.95]
   ngram_min: 1
   ngram_max: 2
   random_state: 42

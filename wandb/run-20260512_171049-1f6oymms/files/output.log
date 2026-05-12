@@ -1,0 +1,27 @@
+Loaded articles: 669
+Using text column: topic_text
+Reconstruction error: 24.4968
+Vocabulary size: 3000
+
+Discovered topics:
+Topic 0: continue, reading, continue reading, new, years, like, tv, just, year, film
+Topic 1: ship, passengers, cruise, cruise ship, hantavirus, hantavirushit, mv, mv hondius, hondius, tenerife
+Topic 2: news, latest news, 2026, latest, 2026 latest, catch important, important stories, politics culture, entertainment politics, world business
+Topic 3: starmer, keir, keir starmer, labour, prime, minister, prime minister, mps, leadership, labour mps
+Topic 4: iran, war, iran war, energy, middle east, hormuz, middle, east, gulf, strait
+Topic 5: world cup, cup, world, england, squad, cup squad, named, tournament, advocaat, fifa
+Topic 6: league, west, premier league, west ham, ham, premier, arsenal, var, title, equaliser
+Topic 7: reform, uk, election, labour, reform uk, gains, party, leader, results, wales
+Topic 8: tech, tech life, life, ai, palace, tools, tribute, shops, pay, say
+Topic 9: ukraine, ceasefire, russia, putin, moscow, victory, ukrainian, war, russian, day
+Topic 10: health, james, inside health, health james, inside, gallagher, james gallagher, outbreak, meningitis, mental
+Topic 11: trump, president, china, summit, donald trump, donald, president donald, visit, xi, beijing
+Topic 12: bbc, science, bbc inside, inside science, sport, inside, bbc sport, doctors, explore, football
+Topic 13: sanctions, violence, israeli, settlers, israeli settlers, sanctions israeli, eu, west bank, bank, west
+Topic 14: budget, news, federal, australia, federal budget, daily, sports, australias, email, free
+/app/src/training/training_topic_model.py:354: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "created_at": datetime.utcnow().isoformat(),
+Saved model to: models/topic_model/2026-05-12/nmf_topic_model.joblib
+Saved vectorizer to: models/topic_model/2026-05-12/tfidf_vectorizer.joblib
+Saved metadata to: models/topic_model/2026-05-12/topic_metadata.json
+Saved training topic assignments to: data/predictions/topic_assignments_training_2026-05-12.csv

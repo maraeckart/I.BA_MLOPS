@@ -13,18 +13,18 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 
 
-WANDB_PROJECT = "guardian-news-topic-classification"
+WANDB_PROJECT = "news-topic-classification"
 
 
 def get_processed_files(processed_dir: str = "data/processed") -> list[Path]:
     processed_folder = Path(processed_dir)
 
     processed_files = []
-    processed_files.extend(processed_folder.glob("processed_guardian_news_*.csv"))
-    processed_files.extend(processed_folder.glob("api/processed_guardian_api_*.csv"))
+    processed_files.extend(processed_folder.glob("processed_news_*.csv"))
+    processed_files.extend(processed_folder.glob("api/processed_api_*.csv"))
 
     if not processed_files:
-        raise FileNotFoundError("No processed Guardian news files found.")
+        raise FileNotFoundError("No processed news files found.")
     return processed_files
 
 def load_training_data(processed_dir: str = "data/processed") -> pd.DataFrame:
@@ -159,9 +159,9 @@ def log_dataset_artifact(
     processed_files: list[Path],
 ) -> None:
     artifact = wandb.Artifact(
-        name="processed-guardian-news",
+        name="processed-news",
         type="dataset",
-        description="Processed Guardian news CSV files used for training.",
+        description="Processed news CSV files used for training.",
     )
 
     for file_path in processed_files:
@@ -175,7 +175,7 @@ def log_model_artifact(
     metrics_path: str,
 ) -> None:
     artifact = wandb.Artifact(
-        name="guardian-topic-classifier",
+        name="news-topic-classifier",
         type="model",
         description="TF-IDF and Logistic Regression baseline topic classifier.",
     )

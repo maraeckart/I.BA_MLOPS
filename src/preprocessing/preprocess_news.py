@@ -335,7 +335,7 @@ def add_features(news_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_raw_file_for_date(run_date: str, raw_dir: str = "data/raw/rss/live") -> Path:
-    raw_file = Path(raw_dir) / f"raw_guardian_news_{run_date}.csv"
+    raw_file = Path(raw_dir) / f"raw_news_{run_date}.csv"
 
     if not raw_file.exists():
         raise FileNotFoundError(f"Raw file not found: {raw_file}")
@@ -365,7 +365,7 @@ def save_processed_news(
 
 
 def get_default_output_path(run_date: str) -> Path:
-    output_path = Path("data/processed/live") / f"processed_guardian_news_{run_date}.csv"
+    output_path = Path("data/processed/live") / f"processed_news_{run_date}.csv"
 
     return output_path
 

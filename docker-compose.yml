@@ -38,3 +38,15 @@ services:
     ports:
       - "8080:8080"
     command: airflow standalone
+
+  api:
+    build: .
+    container_name: news-topic-api
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+    ports:
+      - "8000:8000"
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload

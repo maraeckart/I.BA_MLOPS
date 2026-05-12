@@ -8,35 +8,150 @@
 #   - name: guardian_eu
 #     url: "https://www.theguardian.com/world/europe-news/rss"
 
-sources:
+# sources:
+#   - source_name: guardian
+#     category: Politics
+#     url: "https://www.theguardian.com/world/rss"
+#     api_section: "world"
+
+#   - source_name: guardian
+#     category: Economy
+#     url: "https://www.theguardian.com/business/rss"
+#     api_section: "business"
+
+#   - source_name: guardian
+#     category: Technology
+#     url: "https://www.theguardian.com/technology/rss"
+#     api_section: "technology"
+
+#   - source_name: guardian
+#     category: Climate
+#     url: "https://www.theguardian.com/environment/rss"
+#     api_section: "environment"
+
+#   - source_name: guardian
+#     category: Sports
+#     url: "https://www.theguardian.com/sport/rss"
+#     api_section: "sport"
+
+#   - source_name: guardian
+#     category: Culture
+#     url: "https://www.theguardian.com/culture/rss"
+#     api_section: "culture"
+  
+ sources:
   - source_name: guardian
-    category: Politics
+    source_section: world
+    country: United Kingdom
+    language: en
     url: "https://www.theguardian.com/world/rss"
     api_section: "world"
 
   - source_name: guardian
-    category: Economy
+    source_section: business
+    country: United Kingdom
+    language: en
     url: "https://www.theguardian.com/business/rss"
     api_section: "business"
 
   - source_name: guardian
-    category: Technology
+    source_section: technology
+    country: United Kingdom
+    language: en
     url: "https://www.theguardian.com/technology/rss"
     api_section: "technology"
 
   - source_name: guardian
-    category: Climate
+    source_section: environment
+    country: United Kingdom
+    language: en
     url: "https://www.theguardian.com/environment/rss"
     api_section: "environment"
 
   - source_name: guardian
-    category: Sports
+    source_section: sport
+    country: United Kingdom
+    language: en
     url: "https://www.theguardian.com/sport/rss"
     api_section: "sport"
 
   - source_name: guardian
-    category: Culture
+    source_section: culture
+    country: United Kingdom
+    language: en
     url: "https://www.theguardian.com/culture/rss"
     api_section: "culture"
+
+  # - source_name: reuters
+  #   source_section: world
+  #   country: United Kingdom
+  #   language: en
+  #   url: "REUTERS_RSS_URL_HERE"
+
+  - source_name: euronews
+    source_section: news
+    country: Europe
+    language: en
+    url: "https://www.euronews.com/rss?level=theme&name=news"
+
+  - source_name: france24
+    source_section: europe
+    country: France
+    language: en
+    url: "https://www.france24.com/en/europe/rss"
+
+  - source_name: deutsche_welle
+    source_section: top_stories
+    country: Germany
+    language: en
+    url: "https://rss.dw.com/rdf/rss-en-top"
+
+  - source_name: bbc
+    source_section: world
+    country: United Kingdom
+    language: en
+    url: "https://feeds.bbci.co.uk/news/world/rss.xml"
+
+  - source_name: bbc
+    source_section: business
+    country: United Kingdom
+    language: en
+    url: "https://feeds.bbci.co.uk/news/business/rss.xml"
+
+  - source_name: bbc
+    source_section: technology
+    country: United Kingdom
+    language: en
+    url: "https://feeds.bbci.co.uk/news/technology/rss.xml"
+
+  - source_name: bbc
+    source_section: science_environment
+    country: United Kingdom
+    language: en
+    url: "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+
+  - source_name: bbc
+    source_section: politics
+    country: United Kingdom
+    language: en
+    url: "https://feeds.bbci.co.uk/news/politics/rss.xml"
+
+  - source_name: bbc
+    source_section: health
+    country: United Kingdom
+    language: en
+    url: "https://feeds.bbci.co.uk/news/health/rss.xml"
+
+  - source_name: bbc
+    source_section: entertainment_arts
+    country: United Kingdom
+    language: en
+    url: "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"
+
+  - source_name: bbc
+    source_section: sport
+    country: United Kingdom
+    language: en
+    url: "https://feeds.bbci.co.uk/sport/rss.xml"
 
 

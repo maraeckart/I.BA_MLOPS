@@ -41,7 +41,7 @@ with DAG(
             "cd /app && "
             "PYTHONPATH=/app "
             "python -m src.storage.upload_to_gcs "
-            "--local-path data/raw/rss/live/raw_guardian_news_{{ ds }}.csv "
+            "--local-path data/raw/rss/live/raw_news_{{ ds }}.csv "
             "--gcs-prefix raw/rss/live"
         ),
     )
@@ -62,7 +62,7 @@ with DAG(
             "cd /app && "
             "PYTHONPATH=/app "
             "python -m src.storage.upload_to_gcs "
-            "--local-path data/processed/live/processed_guardian_news_{{ ds }}.csv "
+            "--local-path data/processed/live/processed_news_{{ ds }}.csv "
             "--gcs-prefix processed/live"
         ),
     )
@@ -74,7 +74,7 @@ with DAG(
             "mkdir -p data/predictions/live && "
             "PYTHONPATH=/app "
             "python -m src.inference.predict_topics "
-            "--input-path data/processed/live/processed_guardian_news_{{ ds }}.csv "
+            "--input-path data/processed/live/processed_news_{{ ds }}.csv "
             f"--model-dir models/topic_model/{MODEL_DATE} "
             "--output-path data/predictions/live/topic_predictions_{{ ds }}.csv"
         ),

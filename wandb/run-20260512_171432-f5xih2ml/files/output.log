@@ -1,0 +1,22 @@
+Loaded articles: 669
+Using text column: topic_text
+Reconstruction error: 24.8064
+Vocabulary size: 3000
+
+Discovered topics:
+Topic 0: continue, reading, continue reading, new, years, like, year, tv, just, uk
+Topic 1: ship, passengers, cruise, cruise ship, hantavirus, hantavirushit, outbreak, hondius, mv hondius, mv
+Topic 2: news, latest news, 2026, latest, stories europe, news world, entertainment politics, politics culture, culture travel, catch important
+Topic 3: starmer, labour, keir, minister, keir starmer, prime, election, prime minister, mps, leadership
+Topic 4: iran, trump, war, president, iran war, china, donald, donald trump, president donald, proposal
+Topic 5: world cup, cup, world, england, squad, cup squad, named, tournament, advocaat, fifa
+Topic 6: league, west, ham, west ham, premier league, premier, arsenal, var, title, equaliser
+Topic 7: tech, tech life, life, ai, palace, tools, tribute, shops, pay, hospital
+Topic 8: bbc, inside, health, james, health james, inside health, science, bbc inside, inside science, gallagher
+Topic 9: ukraine, ceasefire, russia, putin, moscow, ukrainian, war, victory, russian, parade
+/app/src/training/training_topic_model.py:354: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "created_at": datetime.utcnow().isoformat(),
+Saved model to: models/topic_model/2026-05-12/nmf_topic_model.joblib
+Saved vectorizer to: models/topic_model/2026-05-12/tfidf_vectorizer.joblib
+Saved metadata to: models/topic_model/2026-05-12/topic_metadata.json
+Saved training topic assignments to: data/predictions/topic_assignments_training_2026-05-12.csv

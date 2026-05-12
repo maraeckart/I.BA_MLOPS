@@ -1,0 +1,18 @@
+Loaded articles: 669
+Using text column: topic_text
+KMeans inertia: 644.8869
+Vocabulary size: 3000
+
+Discovered KMeans baseline topics:
+Topic 0: president, trump, ceasefire, ukraine, war, china, summit, donald trump, donald, putin
+Topic 1: uk, reform, labour, election, voters, reform uk, gains, leader, party, elections
+Topic 2: reading, continue, continue reading, years, like, new, tv, ai, just, music
+Topic 3: starmer, ship, hantavirus, passengers, says, cruise, tech, cruise ship, keir, health
+Topic 4: west, league, arsenal, premier league, premier, ham, west ham, match, var, title
+Topic 5: world, news, cup, world cup, iran, new, 2026, war, latest, latest news
+/Users/maraeckart/dev/hslu/fs26/MLOPS/project/I.BA_MLOPS/src/training/training_kmeans_baseline.py:368: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "created_at": datetime.utcnow().isoformat(),
+Saved KMeans model to: models/topic_model_kmeans_baseline/2026-05-12/kmeans_topic_model.joblib
+Saved vectorizer to: models/topic_model_kmeans_baseline/2026-05-12/tfidf_vectorizer.joblib
+Saved metadata to: models/topic_model_kmeans_baseline/2026-05-12/topic_metadata.json
+Saved KMeans training topic assignments to: data/predictions/kmeans_topic_assignments_training_2026-05-12.csv
