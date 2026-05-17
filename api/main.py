@@ -40,7 +40,7 @@ def topics() -> dict[str, Any]:
     return {
         "algorithm": metadata["algorithm"],
         "n_topics": metadata["n_topics"],
-        "topic_keywords": metadata["topic_keywords"],
+        "topic_keywords": metadata["topic_keywords"]
     }
 
 @app.post("/predict", response_model=PredictionResponse)
