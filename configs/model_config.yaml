@@ -9,7 +9,7 @@ model:
   ngram_max: 2
   random_state: 42
   max_iter: 500
-  top_n_keywords: 10
+  top_n_keywords: 8
 
 text:
   text_column: "topic_text"

@@ -1,0 +1,25 @@
+Rolling window start date: 2026-05-16
+Rolling window end date: 2026-05-18
+Processed files used: 3
+ - data/processed/live/processed_news_2026-05-16.csv
+ - data/processed/live/processed_news_2026-05-17.csv
+ - data/processed/live/processed_news_2026-05-18.csv
+Loaded articles before text filtering: 1182
+Using text column: topic_text
+Training rows after text filtering: 1182
+Reconstruction error: 33.4420
+Vocabulary size: 3000
+
+Discovered topics:
+Topic 0: reading, continue, continue reading, new, people, years, uk, like, london, says
+Topic 1: news, latest news, 2026, latest, politics culture, catch important, 2026 latest, bulletin, business entertainment, stories europe
+Topic 2: starmer, minister, leadership, labour, prime, prime minister, keir, keir starmer, streeting, burnham
+Topic 3: trump, xi, president, china, beijing, summit, taiwan, jinping, xi jinping, donald
+Topic 4: cup, league, final, win, manchester, fa, city, fa cup, chelsea, title
+Topic 5: eurovision, contest, song, song contest, dara, vienna, eurovision song, israels, bulgaria, israels participation
+/app/src/training/training_topic_model.py:447: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "created_at": datetime.utcnow().isoformat(),
+Saved model to: models/topic_model/2026-05-18/nmf_topic_model.joblib
+Saved vectorizer to: models/topic_model/2026-05-18/tfidf_vectorizer.joblib
+Saved metadata to: models/topic_model/2026-05-18/topic_metadata.json
+Saved training topic assignments to: data/predictions/topic_assignments_training_2026-05-18.csv

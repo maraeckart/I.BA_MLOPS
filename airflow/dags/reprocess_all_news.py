@@ -24,9 +24,9 @@ def reprocess_all_news_files() -> None:
     processed_live_dir = Path("/app/data/processed/live")
     processed_live_dir.mkdir(parents=True, exist_ok=True)
 
-    for raw_file in sorted(raw_rss_dir.glob("raw_guardian_news_*.csv")):
-        run_date = raw_file.stem.replace("raw_guardian_news_", "")
-        output_path = processed_live_dir / f"processed_guardian_news_{run_date}.csv"
+    for raw_file in sorted(raw_rss_dir.glob("raw_news_*.csv")):
+        run_date = raw_file.stem.replace("raw_news_", "")
+        output_path = processed_live_dir / f"processed_news_{run_date}.csv"
 
         jobs.append(
             {

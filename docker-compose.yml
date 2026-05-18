@@ -49,4 +49,16 @@ services:
       - PYTHONPATH=/app
     ports:
       - "8000:8000"
-    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+
+  dashboard:
+    build: .
+    container_name: news-topic-dashboard
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+    ports:
+      - "8501:8501"
+    command: streamlit run dashboard/app.py --server.address=0.0.0.0 --server.port=8501

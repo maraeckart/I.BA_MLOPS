@@ -1,6 +1,6 @@
 import argparse
 import json
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import joblib
@@ -15,13 +15,51 @@ from src.utils.config import load_yaml_config
 WANDB_PROJECT = "news-topic-modeling"
 
 
-def get_processed_files(processed_dir: str = "data/processed") -> list[Path]:
+def iter_dates(start_date: str, end_date: str):
+    current = date.fromisoformat(start_date)
+    end = date.fromisoformat(end_date)
+
+    while current <= end:
+        yield current.isoformat()
+        current += timedelta(days=1)
+
+
+def get_processed_files(
+    processed_dir: str = "data/processed/live",
+    start_date: str | None = None,
+    end_date: str | None = None,
+) -> list[Path]:
+    """
+    Load processed files for a rolling date window.
+
+    Expected live filename pattern:
+        processed_news_YYYY-MM-DD.csv
+
+    Example:
+        data/processed/live/processed_news_2026-05-18.csv
+    """
     processed_folder = Path(processed_dir)
 
-    processed_files = []
-    processed_files.extend(processed_folder.glob("live/processed_news_*.csv"))
-    processed_files.extend(processed_folder.glob("backfill/processed_*.csv"))
-    processed_files.extend(processed_folder.glob("api/processed_api_*.csv"))
+    if start_date and end_date:
+        processed_files = []
+
+        for ds in iter_dates(start_date, end_date):
+            file_path = processed_folder / f"processed_news_{ds}.csv"
+
+            if file_path.exists():
+                processed_files.append(file_path)
+            else:
+                print(f"Skipping missing processed file: {file_path}")
+
+        if not processed_files:
+            raise FileNotFoundError(
+                f"No processed files found in {processed_folder} "
+                f"from {start_date} to {end_date}"
+            )
+
+        return processed_files
+
+    processed_files = sorted(processed_folder.glob("processed_news_*.csv"))
 
     if not processed_files:
         raise FileNotFoundError(f"No processed files found in {processed_folder}")
@@ -29,8 +67,17 @@ def get_processed_files(processed_dir: str = "data/processed") -> list[Path]:
     return processed_files
 
 
-def load_training_data(processed_dir: str = "data/processed") -> pd.DataFrame:
-    processed_files = get_processed_files(processed_dir)
+def load_training_data(
+    processed_dir: str = "data/processed/live",
+    start_date: str | None = None,
+    end_date: str | None = None,
+) -> tuple[pd.DataFrame, list[Path]]:
+    processed_files = get_processed_files(
+        processed_dir=processed_dir,
+        start_date=start_date,
+        end_date=end_date,
+    )
+
     dataframes = []
 
     for file_path in processed_files:
@@ -51,20 +98,32 @@ def load_training_data(processed_dir: str = "data/processed") -> pd.DataFrame:
             keep="first",
         )
 
-    return combined_df
+    return combined_df, processed_files
 
 
-def prepare_text_data(news_df: pd.DataFrame, text_column: str) -> pd.Series:
+def prepare_training_frame(
+    news_df: pd.DataFrame,
+    text_column: str,
+) -> tuple[pd.DataFrame, pd.Series]:
     if text_column not in news_df.columns:
         raise ValueError(f"Missing text column: {text_column}")
 
-    texts = news_df[text_column].fillna("").astype(str)
-    texts = texts[texts.str.strip().str.len() > 0]
+    usable_mask = (
+        news_df[text_column]
+        .fillna("")
+        .astype(str)
+        .str.strip()
+        .str.len()
+        > 0
+    )
+
+    training_df = news_df.loc[usable_mask].copy()
+    texts = training_df[text_column].fillna("").astype(str)
 
     if texts.empty:
         raise ValueError("No usable text data found for topic modeling.")
 
-    return texts
+    return training_df, texts
 
 
 def build_vectorizer(
@@ -147,7 +206,7 @@ def save_topic_artifacts(
 
 
 def save_topic_assignments(
-    news_df: pd.DataFrame,
+    training_df: pd.DataFrame,
     topic_ids: list[int],
     topic_scores: list[float],
     topic_keywords: dict[str, list[str]],
@@ -156,10 +215,7 @@ def save_topic_assignments(
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    result_df = news_df.copy()
-
-    usable_index = result_df["topic_text"].fillna("").astype(str).str.strip().str.len() > 0
-    result_df = result_df.loc[usable_index].copy()
+    result_df = training_df.copy()
 
     result_df["topic_id"] = topic_ids
     result_df["topic_score"] = topic_scores
@@ -177,7 +233,7 @@ def log_dataset_artifact(run, processed_files: list[Path]) -> None:
     artifact = wandb.Artifact(
         name="processed-news-topic-data",
         type="dataset",
-        description="Processed news files used for unsupervised topic modeling.",
+        description="Processed news files used for rolling-window unsupervised topic modeling.",
     )
 
     for file_path in processed_files:
@@ -244,11 +300,23 @@ def log_topic_distribution(
 
 def train_topic_model(
     run_date: str,
-    processed_dir: str = "data/processed",
+    processed_dir: str = "data/processed/live",
+    start_date: str | None = None,
+    end_date: str | None = None,
+    model_dir: str | None = None,
 ) -> dict[str, str]:
     model_config = load_yaml_config("configs/model_config.yaml")
 
     text_column = model_config["text"]["text_column"]
+
+    if start_date is None:
+        start_date = run_date
+
+    if end_date is None:
+        end_date = run_date
+
+    if model_dir is None:
+        model_dir = str(Path("models/topic_model") / run_date)
 
     config = {
         "model_type": "unsupervised_topic_modeling",
@@ -264,6 +332,10 @@ def train_topic_model(
         "max_iter": model_config["model"].get("max_iter", 500),
         "top_n_keywords": model_config["model"].get("top_n_keywords", 10),
         "run_date": run_date,
+        "start_date": start_date,
+        "end_date": end_date,
+        "processed_dir": processed_dir,
+        "model_dir": model_dir,
     }
 
     run = wandb.init(
@@ -273,19 +345,34 @@ def train_topic_model(
     )
 
     try:
-        processed_files = get_processed_files(processed_dir)
-        news_df = load_training_data(processed_dir)
+        news_df, processed_files = load_training_data(
+            processed_dir=processed_dir,
+            start_date=start_date,
+            end_date=end_date,
+        )
 
-        print(f"Loaded articles: {len(news_df)}")
+        print(f"Rolling window start date: {start_date}")
+        print(f"Rolling window end date: {end_date}")
+        print(f"Processed files used: {len(processed_files)}")
+
+        for file_path in processed_files:
+            print(f" - {file_path}")
+
+        print(f"Loaded articles before text filtering: {len(news_df)}")
         print(f"Using text column: {text_column}")
 
-        texts = prepare_text_data(news_df, text_column)
+        training_df, texts = prepare_training_frame(
+            news_df=news_df,
+            text_column=text_column,
+        )
+
+        print(f"Training rows after text filtering: {len(training_df)}")
 
         run.config.update(
             {
                 "num_processed_files": len(processed_files),
                 "total_articles_before_text_filtering": len(news_df),
-                "training_rows_after_text_filtering": len(texts),
+                "training_rows_after_text_filtering": len(training_df),
             }
         )
 
@@ -339,11 +426,17 @@ def train_topic_model(
         log_topic_keywords(run, topic_keywords)
         log_topic_distribution(run, topic_ids)
 
-        output_dir = Path("models/topic_model") / run_date
-        assignments_path = Path("data/predictions") / f"topic_assignments_training_{run_date}.csv"
+        assignments_path = (
+            Path("data/predictions")
+            / f"topic_assignments_training_{run_date}.csv"
+        )
 
         metadata = {
             "run_date": run_date,
+            "start_date": start_date,
+            "end_date": end_date,
+            "processed_dir": processed_dir,
+            "processed_files": [str(path) for path in processed_files],
             "model_type": "unsupervised_topic_modeling",
             "algorithm": "nmf",
             "n_topics": config["n_topics"],
@@ -358,11 +451,11 @@ def train_topic_model(
             model=model,
             vectorizer=vectorizer,
             metadata=metadata,
-            output_dir=output_dir,
+            output_dir=model_dir,
         )
 
         assignments_path = save_topic_assignments(
-            news_df=news_df,
+            training_df=training_df,
             topic_ids=topic_ids,
             topic_scores=topic_scores,
             topic_keywords=topic_keywords,
@@ -379,7 +472,7 @@ def train_topic_model(
         prediction_artifact = wandb.Artifact(
             name="training-topic-assignments",
             type="predictions",
-            description="Topic assignments generated on the training dataset.",
+            description="Topic assignments generated on the rolling-window training dataset.",
         )
         prediction_artifact.add_file(assignments_path)
         run.log_artifact(prediction_artifact)
@@ -411,8 +504,29 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--processed-dir",
         required=False,
-        default="data/processed",
-        help="Directory containing processed CSV files.",
+        default="data/processed/live",
+        help="Directory containing processed live CSV files.",
+    )
+
+    parser.add_argument(
+        "--start-date",
+        required=False,
+        default=None,
+        help="Rolling-window start date in YYYY-MM-DD format.",
+    )
+
+    parser.add_argument(
+        "--end-date",
+        required=False,
+        default=None,
+        help="Rolling-window end date in YYYY-MM-DD format.",
+    )
+
+    parser.add_argument(
+        "--model-dir",
+        required=False,
+        default=None,
+        help="Directory where the trained model artifacts should be saved.",
     )
 
     return parser.parse_args()
@@ -424,6 +538,9 @@ def main() -> None:
     train_topic_model(
         run_date=args.run_date,
         processed_dir=args.processed_dir,
+        start_date=args.start_date,
+        end_date=args.end_date,
+        model_dir=args.model_dir,
     )
 
 

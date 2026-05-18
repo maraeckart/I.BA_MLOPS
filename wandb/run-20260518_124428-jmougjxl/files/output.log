@@ -1,0 +1,25 @@
+Rolling window start date: 2026-05-16
+Rolling window end date: 2026-05-18
+Processed files used: 3
+ - data/processed/live/processed_news_2026-05-16.csv
+ - data/processed/live/processed_news_2026-05-17.csv
+ - data/processed/live/processed_news_2026-05-18.csv
+Loaded articles before text filtering: 1168
+Using text column: topic_text
+Training rows after text filtering: 1168
+Reconstruction error: 33.3260
+Vocabulary size: 3000
+
+Discovered topics:
+Topic 0: review, eurovision, london, make, life, world, song, work, home, country
+Topic 1: politics culture, culture travel, world business, catch important, europe world, business entertainment, important stories, bulletin, entertainment politics, stories europe
+Topic 2: minister, starmer, prime, prime minister, labour, keir, leadership, streeting, keir starmer, secretary
+Topic 3: trump, president, beijing, summit, donald, china, jinping, taiwan, chinese, iran
+Topic 4: win, league, final, cup, manchester, season, premier, title, premier league, beat
+Topic 5: ukraine, russia, russian, attack, drone, kyiv, killed, drones, ukrainian, ukraines
+/app/src/training/training_topic_model.py:447: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "created_at": datetime.utcnow().isoformat(),
+Saved model to: models/topic_model/2026-05-18/nmf_topic_model.joblib
+Saved vectorizer to: models/topic_model/2026-05-18/tfidf_vectorizer.joblib
+Saved metadata to: models/topic_model/2026-05-18/topic_metadata.json
+Saved training topic assignments to: data/predictions/topic_assignments_training_2026-05-18.csv
